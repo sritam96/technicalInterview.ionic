@@ -7,7 +7,9 @@ Implements the following page using Ionic v5 and Angular. The search box must in
 ![task1](assets/task1.jpg)
 
 ## How to contribute
+* Fork the project
 * Create a branch with your name 
 * Solve the exercises
 * Commit
 * Push
+* Share your repository
