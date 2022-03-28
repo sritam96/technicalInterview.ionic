@@ -1,0 +1,7 @@
+{
+  "name": "Ionic5GooglePlaces",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
