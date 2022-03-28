@@ -30,13 +30,14 @@ export class HomePage implements OnInit {
   location: any;
   placeid: any;
   GoogleAutocomplete: any;
-
+  placesService: any;
   constructor(
     private geolocation: Geolocation,
     private nativeGeocoder: NativeGeocoder,
     public zone: NgZone
   ) {
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
+
     this.autocomplete = { input: '' };
     this.autocompleteItems = [];
   }
@@ -64,6 +65,7 @@ export class HomePage implements OnInit {
           this.mapElement.nativeElement,
           mapOptions
         );
+        this.placesService = new google.maps.places.PlacesService(this.map);
         this.map.addListener('tilesloaded', () => {
           console.log('accuracy', this.map, this.map.center.lat());
           this.getAddressFromCoords(
@@ -126,8 +128,32 @@ export class HomePage implements OnInit {
     );
   }
 
-  SelectSearchResult(item) {
-    this.placeid = item.place_id;
+  SelectSearchResult(place) {
+    let location = {
+      lat: null,
+      lng: null,
+      name: place.name,
+    };
+    this.placesService.getDetails({ placeId: place.place_id }, (details) => {
+      this.zone.run(() => {
+        location.name = details.name;
+        location.lat = details.geometry.location.lat();
+        location.lng = details.geometry.location.lng();
+      });
+    });
+    let position = new google.maps.LatLng(location.lat, location.lng);
+    const icon = {
+      url: '../../assets/map.svg',
+      scaledSize: new google.maps.Size(50, 50),
+    };
+    let marker = new google.maps.Marker({
+      position: position,
+      latitude: location.lat,
+      longitude: location.lng,
+      icon: icon,
+    });
+    marker.setMap(this.map);
+    this.placeid = place.place_id;
   }
 
   ClearAutocomplete() {
